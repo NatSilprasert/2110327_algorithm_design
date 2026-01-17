@@ -5,19 +5,16 @@ using namespace std;
 
 void recursive(string num, int n, int k, int one, bool check)
 {
-    if (one >= k)
-    {
-        check = true;
-    }
-
-    if (n == 0)
+    if (one == k) check = true;
+    
+    if (n == 0) 
     {
         if (check) cout << num << endl;
         return;
     }
 
-    recursive(num + "0", n - 1, k, 0, check);
-    recursive(num + "1", n - 1, k, one + 1, check);
+    recursive("0" + num, n - 1, k, one, check);
+    if (!check) recursive("1" + num, n - 1, k, one + 1, check);
 }
 
 int main() 
@@ -26,7 +23,7 @@ int main()
     cin.tie(0);
 
     int n, k;
-    cin >> n >> k;
+    cin >> k >> n;
     recursive("", n, k, 0, false);
     
     return 0;
