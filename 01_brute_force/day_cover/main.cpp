@@ -1,77 +1,64 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
-int student_min = 20; // 1 <= n <= 1000 & 1 <= m <=20
+vector<int> v[29];
+int vst[1009];
 int n, m;
-vector<vector<int>> students;
-vector<int> dayCoveredCount;
-int currentDaysCovered = 0;
+int ans = INT_MAX; // Using INT_MAX for initialization
 
-void combi(int studentIdx, int num_student_use)
+void solve(int now, int cnt, int cst)
 {
-    if (num_student_use >= student_min)
+    if (cnt == n)
     {
+        ans = min(ans, cst);
         return;
     }
-
-    if (currentDaysCovered == n)
-    {
-        student_min = min(student_min, num_student_use);
+    if (now == m)
         return;
-    }
-
-    if (studentIdx == m)
-    {
+    if (cst >= ans)
         return;
-    }
 
-    //(Update State)
-    for (int day : students[studentIdx])
+    for (int job : v[now])
     {
-        if (dayCoveredCount[day] == 0)
-        {
-            currentDaysCovered++;
-        }
-        dayCoveredCount[day]++;
+        if (vst[job] == 0)
+            cnt++;
+        vst[job]++;
     }
 
-    combi(studentIdx + 1, num_student_use + 1);
+    solve(now + 1, cnt, cst + 1);
 
-    //(Undo State)
-    for (int day : students[studentIdx])
+    for (int job : v[now])
     {
-        dayCoveredCount[day]--;
-        if (dayCoveredCount[day] == 0)
-        {
-            currentDaysCovered--;
-        }
+        vst[job]--;
+        if (vst[job] == 0)
+            cnt--;
     }
 
-    combi(studentIdx + 1, num_student_use);
+    solve(now + 1, cnt, cst);
 }
 
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    cin >> n >> m;
-    students.resize(m);
-    dayCoveredCount.resize(n + 1, 0);
 
-    for (int i = 0; i < m; i++)
+    cin >> n >> m;
+    for (int i = 0; i < m; ++i)
     {
         int k;
         cin >> k;
-        students[i].resize(k);
-        for (int j = 0; j < k; j++)
+        while (k--)
         {
-            cin >> students[i][j];
+            int x;
+            cin >> x;
+            v[i].push_back(x);
         }
     }
-    combi(0, 0);
 
-    cout << student_min << endl;
+    solve(0, 0, 0);
+    cout << ans;
+
+    return 0;
 }
