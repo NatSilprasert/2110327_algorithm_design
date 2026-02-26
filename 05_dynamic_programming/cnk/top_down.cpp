@@ -3,25 +3,26 @@
 
 using namespace std;
 
-// 1. Top Down
-
-vector<vector<long long>> dp;
-
-long long cnk(int n, int k) {
-    if (k == 0 || n == k) return 1;
-
-    if (dp[n][k] != -1) return dp[n][k];
-
-    return dp[n][k] = cnk(n - 1, k - 1) + cnk(n - 1, k);
-}
+// 2. Bottom Up
 
 int main() {
     int n, k;
     cin >> n >> k;
 
-    dp.assign(n + 1, vector<long long>(k + 1, -1));
-    
-    cout << cnk(n, k);
+    vector<vector<long long>> dp(n + 1, vector<long long>(k + 1, 0));
+
+    for (int i = 0; i <= n; i++) {
+        dp[i][0] = 1;
+        if (i <= k) dp[i][i] = 1;
+    }
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j < i && j <= k; j++) {
+            dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+        }
+    }
+
+    cout << dp[n][k];
 
     return 0;
 }
